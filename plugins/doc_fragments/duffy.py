@@ -14,7 +14,7 @@ options:
       - Taken from the Duffy configuration file if not provided.
   auth_name:
     description:
-      - Tennant name.
+      - Tenant name.
       - Taken from the Duffy configuration file if not provided.
   auth_key:
     description:
