@@ -9,9 +9,6 @@ DOCUMENTATION = '''
     description:
         - Get inventory hosts from Duffy.
         - Uses a YAML configuration file that ends with ``duffy.(yml|yaml)``.
-    extends_documentation_fragment:
-        - inventory_cache
-        - constructed
     options:
       plugin:
         description: token that ensures this is a source file for the C(foreman) plugin.
@@ -31,14 +28,14 @@ DOCUMENTATION = '''
           - Taken from the Duffy configuration file if not provided.
 '''
 
-from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable
+from ansible.plugins.inventory import BaseInventoryPlugin
 
 from duffy.cli import DEFAULT_CONFIG_PATHS
 from duffy.client import DuffyClient
 from duffy.configuration import config, read_configuration
 
 
-class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
+class InventoryModule(BaseInventoryPlugin):
 
     NAME = 'evgeni.duffy.inventory'
 
