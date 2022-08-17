@@ -19,6 +19,8 @@ options:
         description: The ID of the session to retire.
         required: true
         type: int
+extends_documentation_fragment:
+  - evgeni.duffy.duffy
 '''
 
 EXAMPLES = r'''

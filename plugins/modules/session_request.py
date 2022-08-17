@@ -24,6 +24,8 @@ options:
         required: false
         type: int
         default: 1
+extends_documentation_fragment:
+  - evgeni.duffy.duffy
 '''
 
 EXAMPLES = r'''
