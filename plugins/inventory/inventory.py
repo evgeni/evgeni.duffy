@@ -1,21 +1,42 @@
-import duffy.client
-from duffy.cli import DEFAULT_CONFIG_PATHS
-from duffy.configuration import config, read_configuration
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
-# [SessionNodeModel(
-#    hostname='n27-12-108.pool.ci.centos.org',
-#    ipaddr=IPv4Address('172.27.12.108'),
-#    comment=None,
-#    pool='virt-ec2-t2-centos-8s-x86_64',
-#    reusable=False,
-#    data={
-#      'provision': {'ec2_instance_id': 'i-0de7532e64cf0b453', 'ec2_instance_type': 't2.2xlarge', 'hostname': 'n27-12-108.pool.ci.centos.org', 'ipaddr': '172.27.12.108', 'public_hostname': 'ec2-54-144-181-107.compute-1.amazonaws.com', 'public_ipaddress': '54.144.181.107'},
-#      'nodes_spec': {'quantity': 1, 'pool': 'virt-ec2-t2-centos-8s-x86_64'}},
-#    id=1036,
-#    state='deployed'
-# )]
+DOCUMENTATION = '''
+    name: inventory
+    short_description: Duffy inventory source
+    requirements:
+        - duffy
+    description:
+        - Get inventory hosts from Duffy.
+        - Uses a YAML configuration file that ends with ``duffy.(yml|yaml)``.
+    extends_documentation_fragment:
+        - inventory_cache
+        - constructed
+    options:
+      plugin:
+        description: token that ensures this is a source file for the C(foreman) plugin.
+        required: True
+        choices: ['evgeni.duffy.inventory']
+      url:
+        description:
+          - URL of the Duffy API.
+          - Taken from the Duffy configuration file if not provided.
+      auth_name:
+        description:
+          - Tennant name.
+          - Taken from the Duffy configuration file if not provided.
+      auth_key:
+        description:
+          - API key.
+          - Taken from the Duffy configuration file if not provided.
+'''
 
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable
+
+from duffy.cli import DEFAULT_CONFIG_PATHS
+from duffy.client import DuffyClient
+from duffy.configuration import config, read_configuration
+
 
 class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
@@ -42,7 +63,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         config_paths = tuple(path for path in DEFAULT_CONFIG_PATHS if path.exists())
         read_configuration(*config_paths, clear=True, validate=True)
 
-        c = duffy.client.DuffyClient()
+        c = DuffyClient(url=self.get_option('url'), auth_name=self.get_option('auth_name'), auth_key=self.get_option('auth_key'))
 
         sessions = c.list_sessions()
         for session in sessions.sessions:
