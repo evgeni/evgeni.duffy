@@ -49,3 +49,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             for node in session.nodes:
                 self.inventory.add_host(node.hostname)
                 self.inventory.set_variable(node.hostname, 'ansible_host', str(node.ipaddr))
+                for key, value in dict(node).items():
+                    if key in ('hostname', 'ipaddr'):
+                        continue
+                    self.inventory.set_variable(node.hostname, 'duffy_{}'.format(key), value)
