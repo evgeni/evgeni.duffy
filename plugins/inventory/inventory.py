@@ -32,15 +32,26 @@ DOCUMENTATION = '''
 '''
 
 from ansible.plugins.inventory import BaseInventoryPlugin
+from ansible.errors import AnsibleError
 
-from duffy.cli import DEFAULT_CONFIG_PATHS
-from duffy.client import DuffyClient
-from duffy.configuration import config, read_configuration
+try:
+    from duffy.cli import DEFAULT_CONFIG_PATHS
+    from duffy.client import DuffyClient
+    from duffy.configuration import config, read_configuration
+    HAS_DUFFY = True
+except ImportError:
+    HAS_DUFFY = False
 
 
 class InventoryModule(BaseInventoryPlugin):
 
     NAME = 'evgeni.duffy.inventory'
+
+    def __init__(self):
+        super(InventoryModule, self).__init__()
+
+        if not HAS_DUFFY:
+            raise AnsibleError('This script requires duffy[client].')
 
     def verify_file(self, path):
         ''' return true/false if this is possibly a valid file for this plugin to consume '''
