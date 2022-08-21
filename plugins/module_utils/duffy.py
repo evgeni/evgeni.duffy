@@ -4,13 +4,20 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import traceback
 from contextlib import contextmanager
 
-from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 
-from duffy.cli import DEFAULT_CONFIG_PATHS
-from duffy.client import DuffyClient
-from duffy.configuration import config, read_configuration
+try:
+    from duffy.cli import DEFAULT_CONFIG_PATHS
+    from duffy.client import DuffyClient
+    from duffy.configuration import config, read_configuration
+    HAS_DUFFY = True
+    DUFFY_IMP_ERR = None
+except ImportError:
+    HAS_DUFFY = False
+    DUFFY_IMP_ERR = traceback.format_exc()
 
 
 class DuffyAnsibleModule(AnsibleModule):
@@ -26,9 +33,10 @@ class DuffyAnsibleModule(AnsibleModule):
 
         super(DuffyAnsibleModule, self).__init__(argument_spec=argument_spec, supports_check_mode=supports_check_mode, **kwargs)
 
-
     @contextmanager
     def api_client(self):
+        if not HAS_DUFFY:
+            self.fail_json(msg=missing_required_lib("duffy"), exception=DUFFY_IMP_ERR)
         config_paths = tuple(path for path in DEFAULT_CONFIG_PATHS if path.exists())
         read_configuration(*config_paths, clear=True, validate=True)
 

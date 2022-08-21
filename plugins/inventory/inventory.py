@@ -70,4 +70,4 @@ class InventoryModule(BaseInventoryPlugin):
                 for key, value in dict(node).items():
                     if key in ('hostname', 'ipaddr'):
                         continue
-                    self.inventory.set_variable(node.hostname, 'duffy_{}'.format(key), value)
+                    self.inventory.set_variable(node.hostname, 'duffy_{0}'.format(key), value)
