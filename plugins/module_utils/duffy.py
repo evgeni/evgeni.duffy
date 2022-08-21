@@ -12,12 +12,14 @@ from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 try:
     from duffy.cli import DEFAULT_CONFIG_PATHS
     from duffy.client import DuffyClient
+    from duffy.client.main import DuffyAPIErrorModel
     from duffy.configuration import config, read_configuration
     HAS_DUFFY = True
     DUFFY_IMP_ERR = None
 except ImportError:
     HAS_DUFFY = False
     DUFFY_IMP_ERR = traceback.format_exc()
+    DuffyAPIErrorModel = None
 
 
 class DuffyAnsibleModule(AnsibleModule):

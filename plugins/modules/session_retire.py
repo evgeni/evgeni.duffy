@@ -38,8 +38,7 @@ session:
 '''
 
 
-from ansible_collections.evgeni.duffy.plugins.module_utils.duffy import DuffyAnsibleModule
-from duffy.client.main import DuffyAPIErrorModel
+from ansible_collections.evgeni.duffy.plugins.module_utils.duffy import DuffyAnsibleModule, DuffyAPIErrorModel
 
 
 class DuffySessionRetireAnsibleModule(DuffyAnsibleModule):
