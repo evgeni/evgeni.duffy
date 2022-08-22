@@ -1,0 +1,31 @@
+---
+- name: request session
+  session_request:
+    pool: physical-centos8stream-x86_64
+  register: session
+
+- name: assert requested
+  assert:
+    that:
+      - session is changed
+      - session.session is defined
+
+- name: retire session
+  session_retire:
+    session_id: "{{ session.session }}"
+  register: retire
+
+- name: assert retired
+  assert:
+    that:
+      - retire is changed
+
+- name: reture session again, no change expected
+  session_retire:
+    session_id: "{{ session.session }}"
+  register: retire_again
+
+- name: assert no change
+  assert:
+    that:
+      - retire_again is not changed
