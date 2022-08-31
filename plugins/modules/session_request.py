@@ -44,25 +44,41 @@ session:
 '''
 
 
+import json
 from ansible_collections.evgeni.duffy.plugins.module_utils.duffy import DuffyAnsibleModule, DuffyAPIErrorModel
+
+
+def _json_dumpable_dict(a_dict):
+    result = {}
+
+    for (k, v) in a_dict.items():
+        try:
+            json.dumps(v)
+        except TypeError:
+            v = str(v)
+        result[k] = v
+
+    return result
 
 
 class DuffySessionRequestAnsibleModule(DuffyAnsibleModule):
 
     def run(self):
         changed = False
+        nodes = []
         if not self.check_mode:
             result = self.client.request_session([{'pool': self.params.get('pool'), 'quantity': self.params.get('quantity')}])
             if isinstance(result, DuffyAPIErrorModel):
                 session = None
             else:
                 session = result.session.id
+                nodes = [_json_dumpable_dict(dict(node)) for node in result.session.nodes]
                 changed = True
         else:
             session = 0
             changed = True
 
-        self.exit_json(session=session, changed=changed)
+        self.exit_json(session=session, changed=changed, nodes=nodes)
 
 
 def main():

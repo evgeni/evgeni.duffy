@@ -9,6 +9,8 @@
     that:
       - session is changed
       - session.session is defined
+      - session.nodes is defined
+      - session.nodes[0].ipaddr is defined
 
 - name: retire session
   session_retire:
