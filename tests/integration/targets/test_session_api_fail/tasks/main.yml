@@ -1,0 +1,12 @@
+---
+- name: request session
+  session_request:
+    pool: does-not-exist
+  register: session
+  ignore_errors: True
+
+- name: assert failure
+  assert:
+    that:
+      - session is failed
+      - session.msg is defined

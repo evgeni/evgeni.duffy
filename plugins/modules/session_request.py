@@ -64,21 +64,18 @@ def _json_dumpable_dict(a_dict):
 class DuffySessionRequestAnsibleModule(DuffyAnsibleModule):
 
     def run(self):
-        changed = False
-        nodes = []
         if not self.check_mode:
             result = self.client.request_session([{'pool': self.params.get('pool'), 'quantity': self.params.get('quantity')}])
             if isinstance(result, DuffyAPIErrorModel):
-                session = None
-            else:
-                session = result.session.id
-                nodes = [_json_dumpable_dict(dict(node)) for node in result.session.nodes]
-                changed = True
+                self.fail_json(msg=str(result))
+
+            session = result.session.id
+            nodes = [_json_dumpable_dict(dict(node)) for node in result.session.nodes]
         else:
             session = 0
-            changed = True
+            nodes = []
 
-        self.exit_json(session=session, changed=changed, nodes=nodes)
+        self.exit_json(session=session, changed=True, nodes=nodes)
 
 
 def main():
