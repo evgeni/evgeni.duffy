@@ -1,0 +1,30 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+    # we're checking for host0.example.com and this works because this is
+    # the first test running in this suite, but that's not exactly a
+    # good idea to rely on this specific hostname
+    - include_tasks: setup.yml
+
+    - name: assert host is not yet present
+      assert:
+        that:
+          - "'host0.example.com' not in hostvars"
+
+    - meta: refresh_inventory
+
+    - name: assert host is in inventory
+      assert:
+        that:
+          - "'host0.example.com' in hostvars"
+
+    - include_tasks: teardown.yml
+
+    - meta: refresh_inventory
+
+    - name: assert host is gone from the inventory
+      assert:
+        that:
+          - "'host0.example.com' not in hostvars"

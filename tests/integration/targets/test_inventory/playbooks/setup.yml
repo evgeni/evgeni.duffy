@@ -1,0 +1,10 @@
+---
+- name: Request session
+  session_request:
+    pool: physical-centos8stream-x86_64
+  register: session
+
+- name: Write session_id
+  ansible.builtin.copy:
+    dest: ./session_id
+    content: "{{ session.session }}"
