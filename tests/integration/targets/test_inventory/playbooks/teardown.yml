@@ -1,0 +1,9 @@
+---
+- name: Read session_id
+  ansible.builtin.slurp:
+    src: ./session_id
+  register: session_id
+
+- name: Retire session
+  session_retire:
+    session_id: "{{ session_id['content'] | b64decode }}"
