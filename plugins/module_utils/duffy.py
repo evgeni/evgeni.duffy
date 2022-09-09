@@ -22,6 +22,13 @@ except ImportError:
     DuffyAPIErrorModel = None
 
 
+def connect_duffy(url=None, auth_name=None, auth_key=None):
+    config_paths = tuple(path for path in DEFAULT_CONFIG_PATHS if path.exists())
+    read_configuration(*config_paths, clear=True, validate=True)
+
+    return DuffyClient(url=url, auth_name=auth_name, auth_key=auth_key)
+
+
 class DuffyAnsibleModule(AnsibleModule):
 
     def __init__(self, **kwargs):
@@ -39,10 +46,8 @@ class DuffyAnsibleModule(AnsibleModule):
     def api_client(self):
         if not HAS_DUFFY:
             self.fail_json(msg=missing_required_lib("duffy"), exception=DUFFY_IMP_ERR)
-        config_paths = tuple(path for path in DEFAULT_CONFIG_PATHS if path.exists())
-        read_configuration(*config_paths, clear=True, validate=True)
 
-        self.client = DuffyClient(url=self.params.get('url'), auth_name=self.params.get('auth_name'), auth_key=self.params.get('auth_key'))
+        self.client = connect_duffy(url=self.params.get('url'), auth_name=self.params.get('auth_name'), auth_key=self.params.get('auth_key'))
 
         yield
 
