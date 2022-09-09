@@ -34,13 +34,7 @@ DOCUMENTATION = '''
 from ansible.plugins.inventory import BaseInventoryPlugin
 from ansible.errors import AnsibleError
 
-try:
-    from duffy.cli import DEFAULT_CONFIG_PATHS
-    from duffy.client import DuffyClient
-    from duffy.configuration import config, read_configuration
-    HAS_DUFFY = True
-except ImportError:
-    HAS_DUFFY = False
+from ansible_collections.evgeni.duffy.plugins.module_utils.duffy import connect_duffy, HAS_DUFFY
 
 
 class InventoryModule(BaseInventoryPlugin):
@@ -71,10 +65,7 @@ class InventoryModule(BaseInventoryPlugin):
         # update any options declared in DOCUMENTATION as needed
         config = self._read_config_data(path)
 
-        config_paths = tuple(path for path in DEFAULT_CONFIG_PATHS if path.exists())
-        read_configuration(*config_paths, clear=True, validate=True)
-
-        c = DuffyClient(url=self.get_option('url'), auth_name=self.get_option('auth_name'), auth_key=self.get_option('auth_key'))
+        c = connect_duffy(url=self.get_option('url'), auth_name=self.get_option('auth_name'), auth_key=self.get_option('auth_key'))
 
         sessions = c.list_sessions()
         for session in sessions.sessions:
