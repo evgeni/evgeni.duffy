@@ -76,7 +76,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
                 self.inventory.set_variable(node.hostname, 'ansible_host', str(node.ipaddr))
 
-                host_vars = {'duffy_session': str(session.id)}
+                host_vars = {'duffy_session': session.id}
                 for key, value in dict(node).items():
                     if key in ('hostname', 'ipaddr'):
                         continue
