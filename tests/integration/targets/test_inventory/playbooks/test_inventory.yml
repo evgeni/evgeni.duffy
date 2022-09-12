@@ -20,9 +20,18 @@
         that:
           - "'host0.example.com' in hostvars"
 
+    - name: assert host is in group
+      assert:
+        that:
+          - "'host0.example.com' in groups['duffy_session_1']"
+
     - name: dump hostvars
       debug:
         var: hostvars
+
+    - name: dump groups
+      debug:
+        var: groups
 
     - include_tasks: teardown.yml
 
