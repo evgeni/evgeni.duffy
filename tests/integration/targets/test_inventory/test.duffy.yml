@@ -1,5 +1,7 @@
 plugin: evgeni.duffy.inventory
 
 keyed_groups:
-  - key: duffy_session
+  - key: duffy_session_str
     prefix: duffy_session
+compose:
+  duffy_session_str: duffy_session|string
