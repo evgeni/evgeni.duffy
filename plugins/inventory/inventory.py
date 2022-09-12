@@ -29,15 +29,17 @@ DOCUMENTATION = '''
         description:
           - API key.
           - Taken from the Duffy configuration file if not provided.
+    extends_documentation_fragment:
+      - constructed
 '''
 
-from ansible.plugins.inventory import BaseInventoryPlugin
+from ansible.plugins.inventory import BaseInventoryPlugin, Constructable
 from ansible.errors import AnsibleError
 
 from ansible_collections.evgeni.duffy.plugins.module_utils.duffy import connect_duffy, HAS_DUFFY
 
 
-class InventoryModule(BaseInventoryPlugin):
+class InventoryModule(BaseInventoryPlugin, Constructable):
 
     NAME = 'evgeni.duffy.inventory'
 
@@ -71,9 +73,24 @@ class InventoryModule(BaseInventoryPlugin):
         for session in sessions.sessions:
             for node in session.nodes:
                 self.inventory.add_host(node.hostname)
+
                 self.inventory.set_variable(node.hostname, 'ansible_host', str(node.ipaddr))
-                self.inventory.set_variable(node.hostname, 'duffy_session', session.id)
+
+                host_vars = {'duffy_session': session.id}
                 for key, value in dict(node).items():
                     if key in ('hostname', 'ipaddr'):
                         continue
-                    self.inventory.set_variable(node.hostname, 'duffy_{0}'.format(key), value)
+                    host_vars['duffy_{0}'.format(key)] = value
+                for key, value in host_vars.items():
+                    self.inventory.set_variable(node.hostname, key, value)
+
+                # Determines if composed variables or groups using nonexistent variables is an error
+                strict = self.get_option('strict')
+
+                # Add variables created by the user's Jinja2 expressions to the host
+                self._set_composite_vars(self.get_option('compose'), host_vars, node.hostname, strict=True)
+
+                # The following two methods combine the provided variables dictionary with the latest host variables
+                # Using these methods after _set_composite_vars() allows groups to be created with the composed variables
+                self._add_host_to_composed_groups(self.get_option('groups'), host_vars, node.hostname, strict=strict)
+                self._add_host_to_keyed_groups(self.get_option('keyed_groups'), host_vars, node.hostname, strict=strict)
