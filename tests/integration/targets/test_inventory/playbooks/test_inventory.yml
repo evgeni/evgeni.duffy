@@ -20,6 +20,10 @@
         that:
           - "'host0.example.com' in hostvars"
 
+    - name: dump hostvars
+      debug:
+        var: hostvars
+
     - include_tasks: teardown.yml
 
     - meta: refresh_inventory
