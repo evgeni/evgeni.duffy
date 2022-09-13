@@ -75,6 +75,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 self.inventory.add_host(node.hostname)
 
                 self.inventory.set_variable(node.hostname, 'ansible_host', str(node.ipaddr))
+                # always use `root` until https://github.com/CentOS/duffy/issues/608 is fixed
+                self.inventory.set_variable(node.hostname, 'ansible_user', 'root')
 
                 host_vars = {'duffy_session': session.id}
                 for key, value in dict(node).items():
