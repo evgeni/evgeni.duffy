@@ -2,4 +2,4 @@ plugin: evgeni.duffy.inventory
 
 keyed_groups:
   - key: duffy_session|string
-    prefix: duffy_session
+    prefix: duffy_session|string
