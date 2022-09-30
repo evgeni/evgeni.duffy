@@ -38,6 +38,7 @@ session:
 '''
 
 
+from ansible.module_utils._text import to_native
 from ansible_collections.evgeni.duffy.plugins.module_utils.duffy import DuffyAnsibleModule, DuffyAPIErrorModel
 
 
@@ -46,14 +47,20 @@ class DuffySessionRetireAnsibleModule(DuffyAnsibleModule):
     def run(self):
         changed = False
         session = self.params.get('session_id')
-        result = self.client.show_session(session)
+        try:
+            result = self.client.show_session(session)
+        except Exception as exc:
+            self.fail_json(msg="Failed to fetch session from Duffy", error=to_native(exc))
 
         if isinstance(result, DuffyAPIErrorModel):
             session = None
         else:
             if result.session.retired_at is None:
                 if not self.check_mode:
-                    self.client.retire_session(session)
+                    try:
+                        self.client.retire_session(session)
+                    except Exception as exc:
+                        self.fail_json(msg="Failed to retire session on Duffy", error=to_native(exc))
                 changed = True
 
         self.exit_json(session=session, changed=changed)

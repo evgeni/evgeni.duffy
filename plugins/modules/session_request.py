@@ -45,6 +45,7 @@ session:
 
 
 import json
+from ansible.module_utils._text import to_native
 from ansible_collections.evgeni.duffy.plugins.module_utils.duffy import DuffyAnsibleModule, DuffyAPIErrorModel
 
 
@@ -65,7 +66,10 @@ class DuffySessionRequestAnsibleModule(DuffyAnsibleModule):
 
     def run(self):
         if not self.check_mode:
-            result = self.client.request_session([{'pool': self.params.get('pool'), 'quantity': self.params.get('quantity')}])
+            try:
+                result = self.client.request_session([{'pool': self.params.get('pool'), 'quantity': self.params.get('quantity')}])
+            except Exception as exc:
+                self.fail_json(msg="Failed to request session from Duffy", error=to_native(exc))
             if isinstance(result, DuffyAPIErrorModel):
                 self.fail_json(msg=str(result))
 
