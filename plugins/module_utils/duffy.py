@@ -12,8 +12,8 @@ from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 try:
     from duffy.cli import DEFAULT_CONFIG_PATHS
     from duffy.client import DuffyClient
-    from duffy.client.main import DuffyAPIErrorModel
-    from duffy.configuration import config, read_configuration
+    from duffy.client.main import DuffyAPIErrorModel  # pylint: disable=unused-import
+    from duffy.configuration import config, read_configuration  # pylint: disable=unused-import
     HAS_DUFFY = True
     DUFFY_IMP_ERR = None
 except ImportError:
