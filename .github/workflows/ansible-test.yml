@@ -20,6 +20,7 @@ jobs:
           - stable-2.13
           - stable-2.14
           - stable-2.15
+          - stable-2.16
           - devel
     runs-on: ubuntu-latest
     steps:
@@ -50,6 +51,7 @@ jobs:
           - stable-2.13
           - stable-2.14
           - stable-2.15
+          - stable-2.16
           - devel
         python:
           - '3.8'
@@ -69,8 +71,12 @@ jobs:
             python: '3.8'
           - ansible: stable-2.14
             python: '3.8'
+          - ansible: stable-2.16
+            python: '3.8'
           - ansible: devel
             python: '3.8'
+          - ansible: stable-2.16
+            python: '3.9'
           - ansible: devel
             python: '3.9'
     steps:
