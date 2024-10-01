@@ -82,6 +82,10 @@ jobs:
             python: '3.11'
           - ansible: stable-2.11
             python: '3.10'
+          - ansible: stable-2.18
+            python: '3.10'
+          - ansible: devel
+            python: '3.10'
           - ansible: stable-2.15
             python: '3.8'
           - ansible: stable-2.14
