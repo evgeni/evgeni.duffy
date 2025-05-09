@@ -55,7 +55,7 @@ class DuffySessionRetireAnsibleModule(DuffyAnsibleModule):
         if isinstance(result, DuffyAPIErrorModel):
             session = None
         else:
-            if result.session.retired_at is None:
+            if result['session']['retired_at'] is None:
                 if not self.check_mode:
                     try:
                         self.client.retire_session(session)

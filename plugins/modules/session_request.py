@@ -73,8 +73,8 @@ class DuffySessionRequestAnsibleModule(DuffyAnsibleModule):
             if isinstance(result, DuffyAPIErrorModel):
                 self.fail_json(msg=str(result))
 
-            session = result.session.id
-            nodes = [_json_dumpable_dict(dict(node)) for node in result.session.nodes]
+            session = result['session']['id']
+            nodes = [_json_dumpable_dict(dict(node)) for node in result['session']['nodes']]
         else:
             session = 0
             nodes = []
