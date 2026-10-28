@@ -70,29 +70,29 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
         c = connect_duffy(url=self.get_option('url'), auth_name=self.get_option('auth_name'), auth_key=self.get_option('auth_key'))
 
         sessions = c.list_sessions()
-        for session in sessions.sessions:
-            for node in session.nodes:
-                self.inventory.add_host(node.hostname)
+        for session in sessions['sessions']:
+            for node in session['nodes']:
+                self.inventory.add_host(node['hostname'])
 
-                self.inventory.set_variable(node.hostname, 'ansible_host', str(node.ipaddr))
+                self.inventory.set_variable(node['hostname'], 'ansible_host', str(node['ipaddr']))
                 # always use `root` until https://github.com/CentOS/duffy/issues/608 is fixed
-                self.inventory.set_variable(node.hostname, 'ansible_user', 'root')
+                self.inventory.set_variable(node['hostname'], 'ansible_user', 'root')
 
-                host_vars = {'duffy_session': session.id}
+                host_vars = {'duffy_session': session['id']}
                 for key, value in dict(node).items():
                     if key in ('hostname', 'ipaddr'):
                         continue
                     host_vars['duffy_{0}'.format(key)] = value
                 for key, value in host_vars.items():
-                    self.inventory.set_variable(node.hostname, key, value)
+                    self.inventory.set_variable(node['hostname'], key, value)
 
                 # Determines if composed variables or groups using nonexistent variables is an error
                 strict = self.get_option('strict')
 
                 # Add variables created by the user's Jinja2 expressions to the host
-                self._set_composite_vars(self.get_option('compose'), host_vars, node.hostname, strict=True)
+                self._set_composite_vars(self.get_option('compose'), host_vars, node['hostname'], strict=True)
 
                 # The following two methods combine the provided variables dictionary with the latest host variables
                 # Using these methods after _set_composite_vars() allows groups to be created with the composed variables
-                self._add_host_to_composed_groups(self.get_option('groups'), host_vars, node.hostname, strict=strict)
-                self._add_host_to_keyed_groups(self.get_option('keyed_groups'), host_vars, node.hostname, strict=strict)
+                self._add_host_to_composed_groups(self.get_option('groups'), host_vars, node['hostname'], strict=strict)
+                self._add_host_to_keyed_groups(self.get_option('keyed_groups'), host_vars, node['hostname'], strict=strict)
