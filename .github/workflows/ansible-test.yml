@@ -36,6 +36,7 @@ jobs:
 
   integration:
     runs-on: ubuntu-latest
+    needs: setup_matrix
     name: I (Ⓐ${{ matrix.ansible }}+py${{ matrix.python }})
     services:
       redis:
@@ -52,6 +53,20 @@ jobs:
         ansible: ${{ fromJSON(needs.setup_matrix.outputs.ansible) }}
         python:
           - '3.13'
+        exclude:
+          - ansible: stable-2.15
+            python: '3.13'
+          - ansible: stable-2.16
+            python: '3.13'
+          - ansible: stable-2.17
+            python: '3.13'
+        include:
+          - ansible: stable-2.15
+            python: '3.9'
+          - ansible: stable-2.16
+            python: '3.10'
+          - ansible: stable-2.17
+            python: '3.11'
     steps:
       - name: Check out code
         uses: actions/checkout@v7
