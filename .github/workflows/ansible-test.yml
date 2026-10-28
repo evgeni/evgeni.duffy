@@ -82,7 +82,7 @@ jobs:
         run: pip install https://github.com/ansible/ansible/archive/${{ matrix.ansible }}.tar.gz --disable-pip-version-check
 
       - name: Install dependencies
-        run: pip install duffy[client]
+        run: pip install -r ansible_collections/evgeni/duffy/requirements.txt
 
       - name: Configure duffy client
         run: curl --create-dirs --output ~/.config/duffy https://raw.githubusercontent.com/evgeni/duffy-mock-container/devel/duffy-mock.yaml
